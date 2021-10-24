@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'container/**'
 
 defaults:
   run:
@@ -20,18 +22,24 @@ jobs:
       - run: npm install
       - run: npm run build
 
-      - name: setting1
-        run: echo 'AWS_S3_BUCKET_NAME=secrets.AWS_S3_BUCKET_NAME' >> $GITHUB_ENV
+      - name: Set the value 1
+        id: step_one
+        run: |
+          echo "aws_bucket_name={secrets.AWS_S3_BUCKET_NAME}" >> $GITHUB_ENV
 
-      - name: setting2
-        run: echo 'AWS_ACCESS_KEY_ID=secrets.AWS_ACCESS_KEY_ID' >> $GITHUB_ENV
+      - name: Set the value 2
+        id: step_two
+        run: |
+          echo "aws_key_id={secrets.AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
 
-      - name: setting3
-        run: echo 'AWS_SECRET_ACCESS_KEY=secrets.AWS_SECRET_ACCESS_KEY' >> $GITHUB_ENV
+      - name: Set the value 3
+        id: step_three
+        run: |
+          echo "aws_access_key={secrets.AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
 
       - uses: chrislennon/action-aws-cli@v1.1
 
-      - run: aws s3 sync dist s3://${{ $AWS_S3_BUCKET_NAME }}/container/latest
+      - run: aws s3 sync dist s3://${{ env.aws_bucket_name }}/container/latest
         env:
-          AWS_ACCESS_KEY_ID: ${{ $AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ $AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ env.aws_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.aws_access_key }}
