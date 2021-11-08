@@ -6,7 +6,8 @@ import App from './App';
 
 // mount function to startup the app
 const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
-    const history = defaultHistory ||
+    const history =
+        defaultHistory ||
         createMemoryHistory({
             initialEntries: [initialPath]
         });
@@ -20,7 +21,7 @@ const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
     return {
         onParentNavigate({ pathname: nextPathname}) {
             const { pathname } = history.location;
-
+            console.log("auth path: " + nextPathname)
             if (pathname !== nextPathname) {
                 history.push(nextPathname);
             }
@@ -30,7 +31,7 @@ const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
 
 // if we are in dev and isolation call mount
 if (process.env.NODE_ENV === 'development') {
-    const devRoot = document.querySelector('#_marketing-dev-root');
+    const devRoot = document.querySelector('#_auth-dev-root');
 
     if (devRoot) {
         mount(devRoot, { defaultHistory: createBrowserHistory() });
